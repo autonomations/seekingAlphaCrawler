@@ -9,14 +9,53 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
+
 BOT_NAME = 'seekingalpha'
 
 SPIDER_MODULES = ['seekingAlpha.spiders']
 NEWSPIDER_MODULE = 'seekingAlpha.spiders'
+DEBUG_ENV = True
+
+ITEM_PIPELINES = {
+	'scrapy.pipelines.images.ImagesPipeline': 1,
+	'scrapy.pipelines.files.FilesPipeline': 50,
+	'seekingAlpha.pipelines.MongoDBPipeline': 100,
+	'seekingAlpha.pipelines.CSVWriterPipeline': 500,
+	'seekingAlpha.pipelines.JsonWriterPipeline': 800,
+}
+
+
+
+
+# Set Limitations on Spider to avoid Ban and endless data
+DOWNLOAD_DELAY = 5
+CLOSESPIDER_PAGECOUNT = 5
+IMAGES_STORE = './output/images'
+FILES_STORE = './output/files'
+IMAGES_EXPIRES = 90
+IMAGES_THUMBS = {
+    'small': (50, 50),
+    'big': (270, 270),
+}
+IMAGES_MIN_HEIGHT = 110
+IMAGES_MIN_WIDTH = 110
+
+
+# Set output Directories and database connection
+OUTPUT_DIRECTORY_JSON = './output/json'
+OUTPUT_DIRECTORY_CSV = './output/csv'
+MONGODB_SERVER = 'localhost'
+MONGODB_PORT = '27071'
+MONGODB_DB = 'seekingalpha'
+MONGODB_COLLECTION = 'december2017'
+
+
+MONGO_URI = 'mongodb://localhost:27017/'
+MONGO_DATABASE = 'seekingalpha_db'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'seekingAlpha (+http://www.yourdomain.com)'
+USER_AGENT = 'Kurt (+http://www.james.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -33,7 +72,7 @@ ROBOTSTXT_OBEY = True
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False

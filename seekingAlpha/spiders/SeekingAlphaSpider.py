@@ -4,26 +4,15 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
 from scrapy.loader import ItemLoader
-from seekingAlpha.items import SeekingAlphaItem
+from seekingAlpha.items import SeekingAlphaItem, SeekingAlphaItemLoader
 
+from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
-
-# How to parse?
-class SeekingAlphaItemLoader(ItemLoader):
-    def __init__(self, itemObject, response):
-        super(SeekingAlphaItemLoader, self).__init__(self, itemObject=itemObject, response=response)
-        self.itemObject = itemObject
-
-        for field in self.itemObject:
-            self.__setattr__(self, field, 'empty')
-            # super( self).ad = 'empty'
 
 
 class SeekingAlphaSpider(CrawlSpider):
     name = 'seekingalpha'
-
     allowed_domains = ['seekingalpha.com']
-
     start_urls = ['http://seekingalpha.com/symbol/AMD']
 
 
@@ -34,25 +23,19 @@ class SeekingAlphaSpider(CrawlSpider):
 
 
     def parse_article(self, response):
-        #print 'Is this being printed'
+        # Create item structure and loader variables
         i = SeekingAlphaItem()
+        loader = SeekingAlphaItemLoader(item=i, response=response)
 
-        #i['domain_id'] = response.xpath('//input[@id="sid"]/@value').extract()
-        #i['name'] = response.xpath('//div[@id="name"]').extract()
-        i['ticker'] =  response.xpath('//a[@sasource="article_primary_about"]').extract_first()
-        i['article_title'] = response.xpath('//h1[@itemprop="headline"]/text()').extract_first()
-        i['article_summary'] = response.xpath('//div[@itemprop="description"]/p/text()').extract_first()
-        i['article_body'] = response.xpath('//div[@itemprop="articleBody"]/div/p/text()').extract()
+        #loader.context['article_title'] = response.xpath('//h1[@itemprop="headline"]/text()').extract_first()
+        loader.add_xpath('ticker', '//a[@sasource="article_primary_about"]')
+        loader.add_xpath('article_title', '//h1[@itemprop="headline"]/text()')
+        loader.add_xpath('article_summary', '//div[@itemprop="description"]/p/text()')
 
-        # hxs = HtmlXPathSelector(response)
-        # titles = hxs.xpath('//span[@class="pl"]')
-        # items = []
-        # for titles in titles:
-        #     item = CraigslistSampleItem()
-        #     item["title"] = titles.xpath("a/text()").extract()
-        #     item["link"] = titles.xpath("a/@href").extract()
-        #     items.append(item)
-        # return (items)
+        loader.add_xpath('article_body', '//div[@itemprop="articleBody"]//descendant::p/text()')
+        loader.add_xpath('image_urls', '//div[@itemprop="articleBody"]//descendant::img/@src')
 
+        # loader.add_xpath('comment_list', '//div[@class="c-list"]')
 
-        return i
+        return loader.load_item()
+

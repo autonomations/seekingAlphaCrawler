@@ -4,16 +4,49 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
-
+import os
 import scrapy
+
+from scrapy.loader.processors import TakeFirst, MapCompose, Join
+from w3lib.html import remove_tags
+from scrapy.loader import ItemLoader
 
 
 class SeekingAlphaItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    ticker = scrapy.Field()
-    article_title = scrapy.Field()
-    article_summary = scrapy.Field()
-    article_body = scrapy.Field()
+    ticker = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=TakeFirst())
+    article_title = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=TakeFirst())
+    article_summary = scrapy.Field(
+        input_processor=MapCompose(str.strip))
+    article_body = scrapy.Field(
+        input_processor=MapCompose(str.strip))
+    image_urls = scrapy.Field()
 
-    pass
+    file_urls = scrapy.Field()
+
+
+
+# How to parse?
+class SeekingAlphaItemLoader(ItemLoader):
+    default_item_class = SeekingAlphaItem()
+    default_input_processor = TakeFirst()
+    default_output_processor = MapCompose(str.strip)
+
+
+    def __init__(self, item, response):
+        ItemLoader.__init__(self, item, response)
+
+
+
+        # for field in self.item:
+        #     self.__setattr__(self, field, 'empty')
+
+
+            # super( self).ad = 'empty'
+
+
+
+
