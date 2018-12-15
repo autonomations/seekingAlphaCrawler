@@ -4,7 +4,6 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
-import os
 import scrapy
 
 from scrapy.loader.processors import TakeFirst, MapCompose, Join
@@ -13,40 +12,24 @@ from scrapy.loader import ItemLoader
 
 
 class SeekingAlphaItem(scrapy.Item):
-    ticker = scrapy.Field(
-        input_processor=MapCompose(remove_tags),
-        output_processor=TakeFirst())
-    article_title = scrapy.Field(
-        input_processor=MapCompose(remove_tags),
-        output_processor=TakeFirst())
-    article_summary = scrapy.Field(
-        input_processor=MapCompose(str.strip))
-    article_body = scrapy.Field(
-        input_processor=MapCompose(str.strip))
-    image_urls = scrapy.Field()
+    ticker = scrapy.Field(input_processor=MapCompose(remove_tags), output_processor=TakeFirst())
+    article_title = scrapy.Field(input_processor=MapCompose(remove_tags), output_processor=TakeFirst())
+    article_summary = scrapy.Field(input_processor=MapCompose(str.strip))
+    article_body = scrapy.Field(input_processor=MapCompose(str.strip))
 
+    image_urls = scrapy.Field()
     file_urls = scrapy.Field()
 
+    article_sentiment = scrapy.Field()
 
 
-# How to parse?
 class SeekingAlphaItemLoader(ItemLoader):
+    """ Seeking Alpha Item Loader that is an Item Wrapper Handler """
+
     default_item_class = SeekingAlphaItem()
     default_input_processor = TakeFirst()
     default_output_processor = MapCompose(str.strip)
 
 
-    def __init__(self, item, response):
-        ItemLoader.__init__(self, item, response)
-
-
-
-        # for field in self.item:
-        #     self.__setattr__(self, field, 'empty')
-
-
-            # super( self).ad = 'empty'
-
-
-
-
+    def __init__(cls, item, response):
+        ItemLoader.__init__(cls, item, response)

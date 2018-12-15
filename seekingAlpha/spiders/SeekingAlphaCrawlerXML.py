@@ -2,7 +2,7 @@
 from scrapy.spiders import XMLFeedSpider
 
 
-class SeekingalphacrawlerxmlSpider(XMLFeedSpider):
+class SeekingAlphaCrawlerXMLSpider(XMLFeedSpider):
     name = 'SeekingAlphaCrawlerXML'
 
     stocks = ['AMD', 'TSLA']
@@ -13,7 +13,7 @@ class SeekingalphacrawlerxmlSpider(XMLFeedSpider):
 
     def parse_node(self, response, selector):
         i = {}
-        #i['url'] = selector.select('url').extract()
-        #i['name'] = selector.select('name').extract()
-        #i['description'] = selector.select('description').extract()
+        i['url'] = selector.select('url').extract()
+        i['name'] = selector.select('name').extract()
+        i['description'] = selector.select('description').extract()
         return i

@@ -5,32 +5,36 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 # -*- coding: utf-8 -*-
-
+""" Processing Pipeline to output JSON, CSV, MongoDB Database ready for text sentiment analysis """
 import pymongo
-import json
 import os
 import logging
 import scrapy
+
+# Used for mongo DB
 from seekingAlpha.settings import IMAGES_STORE, FILES_STORE
 from seekingAlpha import settings
 from seekingAlpha.settings import OUTPUT_DIRECTORY_JSON
 from seekingAlpha.settings import OUTPUT_DIRECTORY_CSV
-from seekingAlpha.settings import DEBUG_ENV
-from PIL import Image
+from scrapy.pipelines.images import ImagesPipeline
 
+from textblob import TextBlob
 
 
 # Used for mongo DB
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
-#from scrapy import log
+
 # Used for CSV and JSON Creation
 from scrapy.exporters import CsvItemExporter
 from scrapy.exporters import JsonLinesItemExporter
-from scrapy.exporters import PythonItemExporter
 
+import json
+#from scrapy import log
+from scrapy.exporters import PythonItemExporter
 from scrapy.exporters import BaseItemExporter
 #from logger import logger
+from seekingAlpha.settings import DEBUG_ENV
 
 class CSVWriterPipeline(CsvItemExporter):
     """ Class to Export CSV Variable
@@ -43,6 +47,7 @@ class CSVWriterPipeline(CsvItemExporter):
 
         self.file = open(OUTPUT_DIRECTORY_CSV + '/items.csv', 'wb')
         self.csvExport = CsvItemExporter(file=self.file, include_headers_line=True, join_multivalued=', ')
+
 
     def open_spider(self, spider):
         self.csvExport.start_exporting()
@@ -57,11 +62,26 @@ class CSVWriterPipeline(CsvItemExporter):
                 item[data] = 'empty'
                 raise DropItem("Missing {0}!".format(data))
 
+
+        article_body_processed = ' '.join(item['article_body'])
+        # text = TextBlob(article_body_processed)
+        #
+        # print('--------------------------------------------------------')
+        #
+        # print('--------------------------------------------------------')
+        # for sentence in text.sentences:
+        #     print(sentence)
+
+        # item['article_sentiment'] = text.sentiment.__getattribute__('polarity')
+        # print('--------------------------------------------------------')
+        # print(item['article_sentiment'])
+        # print('--------------------------------------------------------')
+
+
         self.csvExport.export_item(item)
+
         return item
 
-        # if DEBUG_ENV = True
-        #     return item
 
 
 class JsonWriterPipeline(JsonLinesItemExporter):
@@ -75,6 +95,7 @@ class JsonWriterPipeline(JsonLinesItemExporter):
 
         self.file = open(OUTPUT_DIRECTORY_JSON + '/propertyList.json', 'wb')
         self.jsonExport = JsonLinesItemExporter(file=self.file)
+
 
     def open_spider(self, spider):
         self.jsonExport.start_exporting()
@@ -133,7 +154,7 @@ class MongoDBPipeline(object):
         return item
 
 
-class ImagesPipeline(object):
+class ImagesPipeline(ImagesPipeline):
     """
         Image Downloader
     """
@@ -149,6 +170,7 @@ class ImagesPipeline(object):
         image_paths = [x['path'] for ok, x in results if ok]
         if not image_paths:
             raise DropItem("Item contains no images")
+
         item['image_paths'] = image_paths
 
         return item

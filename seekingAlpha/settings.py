@@ -9,6 +9,7 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
+import scrapy
 
 BOT_NAME = 'seekingalpha'
 
@@ -17,19 +18,19 @@ NEWSPIDER_MODULE = 'seekingAlpha.spiders'
 DEBUG_ENV = True
 
 ITEM_PIPELINES = {
-	'scrapy.pipelines.images.ImagesPipeline': 1,
-	'scrapy.pipelines.files.FilesPipeline': 50,
+	#'scrapy.pipelines.images.ImagesPipeline': 1,
+	#'scrapy.pipelines.files.FilesPipeline': 50,
 	'seekingAlpha.pipelines.MongoDBPipeline': 100,
 	'seekingAlpha.pipelines.CSVWriterPipeline': 500,
 	'seekingAlpha.pipelines.JsonWriterPipeline': 800,
 }
 
 
-
+AUTOTHROTTLE_ENABLED=True
 
 # Set Limitations on Spider to avoid Ban and endless data
-DOWNLOAD_DELAY = 5
-CLOSESPIDER_PAGECOUNT = 5
+# DOWNLOAD_DELAY = 1.5
+CLOSESPIDER_PAGECOUNT = 50
 IMAGES_STORE = './output/images'
 FILES_STORE = './output/files'
 IMAGES_EXPIRES = 90
