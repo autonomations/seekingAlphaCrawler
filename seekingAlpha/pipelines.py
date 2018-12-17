@@ -45,7 +45,7 @@ class CSVWriterPipeline(CsvItemExporter):
         if not os.path.exists(OUTPUT_DIRECTORY_CSV):
             os.makedirs(OUTPUT_DIRECTORY_CSV)
 
-        self.file = open(OUTPUT_DIRECTORY_CSV + '/items.csv', 'wb')
+        self.file = open(OUTPUT_DIRECTORY_CSV + '/stocks.csv', 'wb')
         self.csvExport = CsvItemExporter(file=self.file, include_headers_line=True, join_multivalued=', ')
 
 
@@ -93,7 +93,7 @@ class JsonWriterPipeline(JsonLinesItemExporter):
         if not os.path.exists(OUTPUT_DIRECTORY_JSON):
             os.makedirs(OUTPUT_DIRECTORY_JSON)
 
-        self.file = open(OUTPUT_DIRECTORY_JSON + '/propertyList.json', 'wb')
+        self.file = open(OUTPUT_DIRECTORY_JSON + '/stocks.json', 'wb')
         self.jsonExport = JsonLinesItemExporter(file=self.file)
 
 
