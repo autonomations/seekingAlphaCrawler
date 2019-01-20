@@ -29,7 +29,7 @@ ITEM_PIPELINES = {
 # AUTOTHROTTLE_ENABLED=True
 
 # Set Limitations on Spider to avoid Ban and endless data
-DOWNLOAD_DELAY = .1
+DOWNLOAD_DELAY = 2
 CLOSESPIDER_PAGECOUNT = 50
 IMAGES_STORE = './output/images'
 FILES_STORE = './output/files'

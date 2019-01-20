@@ -23,13 +23,15 @@ class SeekingAlphaSpider(CrawlSpider):
 
     rules = (
         Rule(LinkExtractor(allow=(), restrict_xpaths=('//div[@class="symbol_article"]/a',)), callback="parse_article",
-             follow=True),
+             follow=True, ),
     )
 
 
     def parse_article(self, response):
         # Create item structure and loader variables
         i = SeekingAlphaItem()
+#        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
+
         loader = SeekingAlphaItemLoader(item=i, response=response)
 
         #loader.context['article_title'] = response.xpath('//h1[@itemprop="headline"]/text()').extract_first()
