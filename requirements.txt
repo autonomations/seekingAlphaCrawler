@@ -42,7 +42,7 @@ jmespath==0.9.3
 jsonschema==2.6.0
 jupyter-client==5.1.0
 jupyter-core==4.4.0
-jupyterlab==0.30.6
+jupyterlab==1.2.21
 jupyterlab-launcher==0.6.0
 lxml==4.2.5
 MarkupSafe==1.0
